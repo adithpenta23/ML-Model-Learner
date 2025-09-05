@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-from sklearn.datasets import load_boston, load_iris, load_wine
+from sklearn.datasets import load_iris, load_wine
 
 def load_sample_data(dataset_name="iris"):
     """Load sample datasets for demonstration"""

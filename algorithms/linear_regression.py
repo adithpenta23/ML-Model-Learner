@@ -7,8 +7,7 @@ import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.datasets import make_regression
-from utils.data_utils import load_sample_data, process_uploaded_data
-from utils.plot_utils import create_loss_curve_plot
+from utils.data_utils import process_uploaded_data
 
 def show_page():
     st.title("📈 Linear Regression")
@@ -42,10 +41,10 @@ def show_page():
         X, y = make_regression(n_samples=n_samples, n_features=n_features, 
                               noise=noise_level, random_state=42)
         
+        feature_cols = [f'Feature_{i+1}' for i in range(n_features)]
         if n_features == 1:
-            df = pd.DataFrame({'X': X.flatten(), 'y': y})
+            df = pd.DataFrame({'X': X.ravel(), 'y': y})
         else:
-            feature_cols = [f'Feature_{i+1}' for i in range(n_features)]
             df = pd.DataFrame(X, columns=feature_cols)
             df['y'] = y
     else:
@@ -98,7 +97,7 @@ def show_page():
             
             # Scatter plot of actual data
             fig.add_trace(go.Scatter(
-                x=X.flatten(),
+                x=X.ravel(),
                 y=y,
                 mode='markers',
                 name='Actual Data',
@@ -106,11 +105,11 @@ def show_page():
             ))
             
             # Regression line
-            x_range = np.linspace(X.min(), X.max(), 100).reshape(-1, 1)
+            x_range = np.linspace(np.min(X), np.max(X), 100).reshape(-1, 1)
             y_range_pred = model.predict(x_range)
             
             fig.add_trace(go.Scatter(
-                x=x_range.flatten(),
+                x=x_range.ravel(),
                 y=y_range_pred,
                 mode='lines',
                 name='Regression Line',
@@ -127,11 +126,14 @@ def show_page():
             st.plotly_chart(fig, use_container_width=True)
         else:
             # Feature importance for multiple features
-            feature_names = feature_cols if data_source == "Upload CSV" else [f'Feature_{i+1}' for i in range(n_features)]
+            if data_source == "Upload CSV":
+                display_feature_names = feature_cols
+            else:
+                display_feature_names = [f'Feature_{i+1}' for i in range(n_features)]
             
             fig = go.Figure()
             fig.add_trace(go.Bar(
-                x=feature_names,
+                x=display_feature_names,
                 y=np.abs(model.coef_),
                 name='Feature Importance (|Coefficient|)'
             ))
@@ -185,9 +187,12 @@ def show_page():
         if n_features == 1:
             st.write(f"Slope: {model.coef_[0]:.4f}")
         else:
-            feature_names = feature_cols if data_source == "Upload CSV" else [f'Feature_{i+1}' for i in range(n_features)]
+            if data_source == "Upload CSV":
+                coef_feature_names = feature_cols
+            else:
+                coef_feature_names = [f'Feature_{i+1}' for i in range(n_features)]
             for i, coef in enumerate(model.coef_):
-                st.write(f"{feature_names[i]}: {coef:.4f}")
+                st.write(f"{coef_feature_names[i]}: {coef:.4f}")
     
     # Step-by-step explanation
     st.subheader("🔍 Step-by-Step Explanation")

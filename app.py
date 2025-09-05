@@ -1,7 +1,11 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from algorithms import linear_regression, logistic_regression, decision_trees, kmeans, neural_networks
+from algorithms.linear_regression import show_page as linear_regression_page
+from algorithms.logistic_regression import show_page as logistic_regression_page  
+from algorithms.decision_trees import show_page as decision_trees_page
+from algorithms.kmeans import show_page as kmeans_page
+from algorithms.neural_networks import show_page as neural_networks_page
 
 # Configure page
 st.set_page_config(
@@ -29,15 +33,15 @@ def main():
     
     # Main content area
     if algorithm == "Linear Regression":
-        linear_regression.show_page()
+        linear_regression_page()
     elif algorithm == "Logistic Regression":
-        logistic_regression.show_page()
+        logistic_regression_page()
     elif algorithm == "Decision Trees":
-        decision_trees.show_page()
+        decision_trees_page()
     elif algorithm == "K-Means Clustering":
-        kmeans.show_page()
+        kmeans_page()
     elif algorithm == "Neural Networks":
-        neural_networks.show_page()
+        neural_networks_page()
 
 if __name__ == "__main__":
     main()

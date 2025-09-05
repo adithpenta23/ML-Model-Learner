@@ -9,9 +9,6 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from utils.data_utils import process_uploaded_data
-import io
-from sklearn.tree import export_graphviz
-import matplotlib.pyplot as plt
 
 def show_page():
     st.title("🌳 Decision Trees")

@@ -9,7 +9,6 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from utils.data_utils import process_uploaded_data
-import seaborn as sns
 
 def show_page():
     st.title("📊 Logistic Regression")
