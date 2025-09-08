@@ -9,15 +9,15 @@ from algorithms.neural_networks import show_page as neural_networks_page
 
 # Configure page
 st.set_page_config(
-    page_title="ML Algorithm Learning Hub",
-    page_icon="🤖",
+    page_title="ML Model Learner",
+    page_icon="D:/MLInteractive/Black White Bold Simple Initials Name Logo.ico",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 def main():
     # Sidebar navigation
-    st.sidebar.title("🤖 ML Learning Hub")
+    st.sidebar.title("ML Model Learner")
     st.sidebar.markdown("Select an algorithm to explore:")
     
     algorithm = st.sidebar.selectbox(

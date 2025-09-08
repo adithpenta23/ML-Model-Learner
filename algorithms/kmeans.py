@@ -8,10 +8,9 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 from sklearn.preprocessing import StandardScaler
-from utils.data_utils import process_uploaded_data
 
 def show_page():
-    st.title("🎯 K-Means Clustering")
+    st.title("K-Means Clustering")
     
     st.markdown("""
     ## What is K-Means Clustering?
@@ -30,7 +29,7 @@ def show_page():
     st.sidebar.subheader("Parameters")
     
     # Data source selection
-    data_source = st.sidebar.radio("Data Source", ["Sample Data", "Upload CSV"])
+    data_source = st.sidebar.radio("Data Source", ["Sample Data"])
     
     if data_source == "Sample Data":
         # Sample data parameters
@@ -52,27 +51,7 @@ def show_page():
         df = pd.DataFrame(X, columns=feature_names)
         
     else:
-        # File upload
-        uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=['csv'])
-        if uploaded_file is not None:
-            df = process_uploaded_data(uploaded_file)
-            if df is not None:
-                # Select features for clustering
-                feature_cols = st.sidebar.multiselect("Select Features for Clustering", df.columns)
-                if feature_cols:
-                    X = df[feature_cols].values
-                    n_features = len(feature_cols)
-                    feature_names = feature_cols
-                    y_true = None  # No true labels for real data
-                else:
-                    st.warning("Please select at least one feature for clustering.")
-                    return
-            else:
-                st.warning("Please upload a valid CSV file.")
                 return
-        else:
-            st.warning("Please upload a CSV file.")
-            return
     
     # K-Means parameters
     k = st.sidebar.slider("Number of Clusters (K)", 2, 10, 3)
@@ -317,33 +296,10 @@ def show_page():
         else:
             st.error("Poor clustering structure")
     
-    # Cluster analysis
-    st.subheader("📊 Cluster Analysis")
-    
-    # Create cluster summary
-    cluster_summary = []
-    for i in range(k):
-        cluster_mask = cluster_labels == i
-        cluster_data = X[cluster_mask]
-        
-        summary = {
-            'Cluster': i,
-            'Size': np.sum(cluster_mask),
-            'Percentage': f"{np.sum(cluster_mask)/len(X)*100:.1f}%"
-        }
-        
-        # Add feature statistics
-        for j, feature in enumerate(feature_names):
-            summary[f'{feature}_mean'] = np.mean(cluster_data[:, j])
-            summary[f'{feature}_std'] = np.std(cluster_data[:, j])
-        
-        cluster_summary.append(summary)
-    
-    summary_df = pd.DataFrame(cluster_summary)
-    st.dataframe(summary_df.round(4))
+   
     
     # Step-by-step explanation
-    st.subheader("🔍 How K-Means Works")
+    st.subheader("How K-Means Works")
     
     with st.expander("Algorithm Steps"):
         st.markdown(f"""
@@ -370,11 +326,11 @@ def show_page():
     st.info(f"""
     **Current Clustering Analysis:**
     
-    🎯 **Silhouette Score: {silhouette_avg:.4f}** - {'Excellent' if silhouette_avg > 0.7 else 'Good' if silhouette_avg > 0.5 else 'Fair' if silhouette_avg > 0.25 else 'Poor'} cluster separation.
+    **Silhouette Score: {silhouette_avg:.4f}** - {'Excellent' if silhouette_avg > 0.7 else 'Good' if silhouette_avg > 0.5 else 'Fair' if silhouette_avg > 0.25 else 'Poor'} cluster separation.
     
-    📊 **Inertia: {inertia:.2f}** - Within-cluster sum of squared distances (lower is better).
+    **Inertia: {inertia:.2f}** - Within-cluster sum of squared distances (lower is better).
     
-    🔄 **Convergence: {kmeans.n_iter_} iterations** - {'Fast convergence' if kmeans.n_iter_ < max_iter//3 else 'Normal convergence' if kmeans.n_iter_ < max_iter//2 else 'Slow convergence'}
+    **Convergence: {kmeans.n_iter_} iterations** - {'Fast convergence' if kmeans.n_iter_ < max_iter//3 else 'Normal convergence' if kmeans.n_iter_ < max_iter//2 else 'Slow convergence'}
     
-    {f"🎲 **ARI Score: {ari_score:.4f}** - Agreement with true clusters ({'Good' if ari_score > 0.7 else 'Fair' if ari_score > 0.3 else 'Poor'})." if y_true is not None else ""}
+    {f" **ARI Score: {ari_score:.4f}** - Agreement with true clusters ({'Good' if ari_score > 0.7 else 'Fair' if ari_score > 0.3 else 'Poor'})." if y_true is not None else ""}
     """)

@@ -14,7 +14,7 @@ def create_loss_curve_plot(loss_history, title="Loss Curve"):
         y=loss_history,
         mode='lines+markers',
         name='Loss',
-        line=dict(color='blue', width=3),
+        line=dict(color='violet', width=3),
         marker=dict(size=4)
     ))
     

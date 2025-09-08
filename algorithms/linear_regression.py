@@ -7,17 +7,16 @@ import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.datasets import make_regression
-from utils.data_utils import process_uploaded_data
 
 def show_page():
-    st.title("📈 Linear Regression")
+    st.title("Linear Regression")
     
     st.markdown("""
     ## What is Linear Regression?
-    
+
     Linear regression is a fundamental supervised learning algorithm that models the relationship between 
     a dependent variable (target) and one or more independent variables (features) using a linear equation.
-    
+
     **Key Concepts:**
     - **Objective**: Find the best line that fits through the data points
     - **Cost Function**: Mean Squared Error (MSE)
@@ -29,13 +28,13 @@ def show_page():
     st.sidebar.subheader("Parameters")
     
     # Data source selection
-    data_source = st.sidebar.radio("Data Source", ["Sample Data", "Upload CSV"])
+    data_source = st.sidebar.radio("Data Source", ["Sample Data"])
     
     if data_source == "Sample Data":
         # Sample data parameters
         n_samples = st.sidebar.slider("Number of Samples", 50, 500, 100)
         noise_level = st.sidebar.slider("Noise Level", 0.0, 50.0, 10.0)
-        n_features = st.sidebar.slider("Number of Features", 1, 5, 1)
+        n_features = st.sidebar.slider("Number of Features", 1, 4, 1)
         
         # Generate sample data
         X, y = make_regression(n_samples=n_samples, n_features=n_features, 
@@ -48,28 +47,8 @@ def show_page():
             df = pd.DataFrame(X, columns=feature_cols)
             df['y'] = y
     else:
-        # File upload
-        uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=['csv'])
-        if uploaded_file is not None:
-            df = process_uploaded_data(uploaded_file)
-            if df is not None:
-                target_col = st.sidebar.selectbox("Select Target Column", df.columns)
-                feature_cols = st.sidebar.multiselect("Select Feature Columns", 
-                                                    [col for col in df.columns if col != target_col])
-                if feature_cols:
-                    X = df[feature_cols].values
-                    y = df[target_col].values
-                    n_features = len(feature_cols)
-                else:
-                    st.warning("Please select at least one feature column.")
-                    return
-            else:
-                st.warning("Please upload a valid CSV file.")
-                return
-        else:
-            st.warning("Please upload a CSV file.")
-            return
-    
+       return
+
     # Model parameters
     fit_intercept = st.sidebar.checkbox("Fit Intercept", value=True)
     
@@ -195,7 +174,7 @@ def show_page():
                 st.write(f"{coef_feature_names[i]}: {coef:.4f}")
     
     # Step-by-step explanation
-    st.subheader("🔍 Step-by-Step Explanation")
+    st.subheader("Step-by-Step Explanation")
     
     with st.expander("How Linear Regression Works"):
         st.markdown("""
@@ -219,10 +198,10 @@ def show_page():
     st.info(f"""
     **Current Model Analysis:**
     
-    🎯 **R² Score: {r2:.4f}** - This means your model explains {r2*100:.1f}% of the variance in the target variable.
+     **R² Score: {r2:.4f}** - This means your model explains {r2*100:.1f}% of the variance in the target variable.
     
-    📏 **RMSE: {rmse:.4f}** - On average, predictions are off by {rmse:.2f} units.
-    
-    📊 **Residuals:** The residual plot shows the difference between actual and predicted values. 
+     **RMSE: {rmse:.4f}** - On average, predictions are off by {rmse:.2f} units.
+
+     **Residuals:** The residual plot shows the difference between actual and predicted values. 
     Ideally, residuals should be randomly scattered around zero with no clear pattern.
     """)

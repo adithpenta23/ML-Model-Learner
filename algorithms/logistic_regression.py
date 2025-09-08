@@ -8,10 +8,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
-from utils.data_utils import process_uploaded_data
 
 def show_page():
-    st.title("📊 Logistic Regression")
+    st.title("Logistic Regression")
     
     st.markdown("""
     ## What is Logistic Regression?
@@ -30,7 +29,7 @@ def show_page():
     st.sidebar.subheader("Parameters")
     
     # Data source selection
-    data_source = st.sidebar.radio("Data Source", ["Sample Data", "Upload CSV"])
+    data_source = st.sidebar.radio("Data Source", ["Sample Data"])
     
     if data_source == "Sample Data":
         # Sample data parameters
@@ -55,30 +54,8 @@ def show_page():
         df['target'] = y
         
     else:
-        # File upload
-        uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=['csv'])
-        if uploaded_file is not None:
-            df = process_uploaded_data(uploaded_file)
-            if df is not None:
-                target_col = st.sidebar.selectbox("Select Target Column", df.columns)
-                feature_cols = st.sidebar.multiselect("Select Feature Columns", 
-                                                    [col for col in df.columns if col != target_col])
-                if feature_cols:
-                    X = df[feature_cols].values
-                    y = df[target_col].values
-                    n_features = len(feature_cols)
-                    feature_names = feature_cols
-                    n_classes = len(np.unique(y))
-                else:
-                    st.warning("Please select at least one feature column.")
-                    return
-            else:
-                st.warning("Please upload a valid CSV file.")
-                return
-        else:
-            st.warning("Please upload a CSV file.")
-            return
-    
+       return
+
     # Model parameters
     C = st.sidebar.slider("Regularization (C)", 0.01, 10.0, 1.0, step=0.01)
     max_iter = st.sidebar.slider("Max Iterations", 100, 2000, 1000)
@@ -173,32 +150,6 @@ def show_page():
             
             st.plotly_chart(fig, use_container_width=True)
         
-        # Confusion Matrix
-        st.subheader("Confusion Matrix")
-        cm = confusion_matrix(y_test, y_pred)
-        
-        fig_cm = go.Figure(data=go.Heatmap(
-            z=cm,
-            x=[f'Predicted {i}' for i in range(n_classes)],
-            y=[f'Actual {i}' for i in range(n_classes)],
-            colorscale='Blues',
-            showscale=True
-        ))
-        
-        fig_cm.update_layout(
-            title="Confusion Matrix",
-            height=400
-        )
-        
-        st.plotly_chart(fig_cm, use_container_width=True)
-    
-    with col2:
-        st.subheader("Model Performance")
-        
-        st.metric("Accuracy", f"{accuracy:.4f}")
-        st.metric("Training Samples", len(X_train))
-        st.metric("Test Samples", len(X_test))
-        
         # Sigmoid function visualization
         st.subheader("Sigmoid Function")
         z = np.linspace(-6, 6, 100)
@@ -225,6 +176,12 @@ def show_page():
         )
         
         st.plotly_chart(fig_sigmoid, use_container_width=True)
+    with col2:
+        st.subheader("Model Performance")
+        
+        st.metric("Accuracy", f"{accuracy:.4f}")
+        st.metric("Training Samples", len(X_train))
+        st.metric("Test Samples", len(X_test))
         
         # Model parameters
         st.subheader("Model Parameters")
@@ -233,13 +190,13 @@ def show_page():
         st.write(f"**Max Iterations:** {max_iter}")
     
     # Classification report
-    st.subheader("📊 Detailed Classification Report")
+    st.subheader("Detailed Classification Report")
     report = classification_report(y_test, y_pred, output_dict=True)
     report_df = pd.DataFrame(report).transpose()
     st.dataframe(report_df.round(4))
     
     # Step-by-step explanation
-    st.subheader("🔍 Step-by-Step Explanation")
+    st.subheader("Step-by-Step Explanation")
     
     with st.expander("How Logistic Regression Works"):
         st.markdown("""
@@ -267,11 +224,11 @@ def show_page():
     st.info(f"""
     **Current Model Analysis:**
     
-    🎯 **Accuracy: {accuracy:.4f}** - Your model correctly classifies {accuracy*100:.1f}% of test samples.
+    **Accuracy: {accuracy:.4f}** - Your model correctly classifies {accuracy*100:.1f}% of test samples.
+
+    **Classes: {n_classes}** - The model is classifying data into {n_classes} different categories.
     
-    🔢 **Classes: {n_classes}** - The model is classifying data into {n_classes} different categories.
-    
-    ⚖️ **Regularization (C={C})**: {'Strong regularization (prevents overfitting)' if C < 1 else 'Weak regularization (allows complex patterns)' if C > 1 else 'Balanced regularization'}
-    
-    🎲 **Decision Boundary:** The model creates a {'linear' if n_classes == 2 else 'complex'} decision boundary to separate different classes.
+    **Regularization (C={C})**: {'Strong regularization (prevents overfitting)' if C < 1 else 'Weak regularization (allows complex patterns)' if C > 1 else 'Balanced regularization'}
+
+    **Decision Boundary:** The model creates a {'linear' if n_classes == 2 else 'complex'} decision boundary to separate different classes.
     """)

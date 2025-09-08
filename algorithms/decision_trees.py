@@ -8,10 +8,10 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor, plot_tre
 from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
-from utils.data_utils import process_uploaded_data
+
 
 def show_page():
-    st.title("🌳 Decision Trees")
+    st.title("Decision Trees")
     
     st.markdown("""
     ## What are Decision Trees?
@@ -34,7 +34,7 @@ def show_page():
     problem_type = st.sidebar.radio("Problem Type", ["Classification", "Regression"])
     
     # Data source selection
-    data_source = st.sidebar.radio("Data Source", ["Sample Data", "Upload CSV"])
+    data_source = st.sidebar.radio("Data Source", ["Sample Data"])
     
     if data_source == "Sample Data":
         # Sample data parameters
@@ -69,36 +69,7 @@ def show_page():
         feature_names = [f'Feature_{i+1}' for i in range(n_features)]
         
     else:
-        # File upload
-        uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=['csv'])
-        if uploaded_file is not None:
-            df = process_uploaded_data(uploaded_file)
-            if df is not None:
-                target_col = st.sidebar.selectbox("Select Target Column", df.columns)
-                feature_cols = st.sidebar.multiselect("Select Feature Columns", 
-                                                    [col for col in df.columns if col != target_col])
-                if feature_cols:
-                    X = df[feature_cols].values
-                    y = df[target_col].values
-                    n_features = len(feature_cols)
-                    feature_names = feature_cols
-                    
-                    # Auto-detect problem type based on target
-                    unique_values = len(np.unique(y))
-                    if unique_values <= 10 and y.dtype == 'object' or np.issubdtype(y.dtype, np.integer):
-                        problem_type = "Classification"
-                    else:
-                        problem_type = "Regression"
-                    st.sidebar.info(f"Auto-detected: {problem_type}")
-                else:
-                    st.warning("Please select at least one feature column.")
-                    return
-            else:
-                st.warning("Please upload a valid CSV file.")
-                return
-        else:
-            st.warning("Please upload a CSV file.")
-            return
+        return 
     
     # Tree parameters
     max_depth = st.sidebar.slider("Max Depth", 1, 20, 5)
@@ -261,15 +232,8 @@ def show_page():
             else:
                 st.write("**MAE:** Mean Absolute Error measures average absolute difference from median")
     
-    # Tree rules
-    st.subheader("🔍 Decision Tree Rules")
-    
-    with st.expander("View Tree Rules (Text Format)"):
-        tree_rules = export_text(model, feature_names=feature_names)
-        st.code(tree_rules, language='text')
-    
     # Step-by-step explanation
-    st.subheader("🌳 How Decision Trees Work")
+    st.subheader("How Decision Trees Work")
     
     with st.expander("Algorithm Explanation"):
         st.markdown("""
@@ -299,23 +263,23 @@ def show_page():
         st.info(f"""
         **Current Tree Analysis:**
         
-        🎯 **Accuracy: {accuracy:.4f}** - Your tree correctly classifies {accuracy*100:.1f}% of test samples.
+        **Accuracy: {accuracy:.4f}** - Your tree correctly classifies {accuracy*100:.1f}% of test samples.
         
-        🌳 **Tree Depth: {model.get_depth()}** - {'This is a shallow tree (good for interpretability)' if model.get_depth() <= 3 else 'This is a deeper tree (more complex patterns)' if model.get_depth() <= 7 else 'This is a very deep tree (risk of overfitting)'}
+        **Tree Depth: {model.get_depth()}** - {'This is a shallow tree (good for interpretability)' if model.get_depth() <= 3 else 'This is a deeper tree (more complex patterns)' if model.get_depth() <= 7 else 'This is a very deep tree (risk of overfitting)'}
         
-        🍃 **Leaves: {model.get_n_leaves()}** - Each leaf represents a final decision rule.
+        **Leaves: {model.get_n_leaves()}** - Each leaf represents a final decision rule.
         
-        📊 **Top Feature:** {feature_names[np.argmax(importances)]} (Importance: {max(importances):.3f})
+        **Top Feature:** {feature_names[np.argmax(importances)]} (Importance: {max(importances):.3f})
         """)
     else:
         st.info(f"""
         **Current Tree Analysis:**
         
-        🎯 **R² Score: {r2:.4f}** - Your tree explains {r2*100:.1f}% of the variance in the target.
+        **R² Score: {r2:.4f}** - Your tree explains {r2*100:.1f}% of the variance in the target.
         
-        🌳 **Tree Depth: {model.get_depth()}** - {'Shallow tree - simple patterns' if model.get_depth() <= 3 else 'Deeper tree - complex patterns' if model.get_depth() <= 7 else 'Very deep tree - potential overfitting'}
+        **Tree Depth: {model.get_depth()}** - {'Shallow tree - simple patterns' if model.get_depth() <= 3 else 'Deeper tree - complex patterns' if model.get_depth() <= 7 else 'Very deep tree - potential overfitting'}
         
-        📏 **RMSE: {np.sqrt(mse):.4f}** - Average prediction error.
-        
-        📊 **Most Important Feature:** {feature_names[np.argmax(importances)]} (Importance: {max(importances):.3f})
+        **RMSE: {np.sqrt(mse):.4f}** - Average prediction error.
+
+        **Most Important Feature:** {feature_names[np.argmax(importances)]} (Importance: {max(importances):.3f})
         """)

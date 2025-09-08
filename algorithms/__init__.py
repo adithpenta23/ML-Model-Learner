@@ -1,1 +1,1 @@
-# algorithms package
+# algorithms packages

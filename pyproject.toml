@@ -1,7 +1,7 @@
 [project]
-name = "repl-nix-workspace"
+name = "My-workspace"
 version = "0.1.0"
-description = "Add your description here"
+description = "These is a ML algorithms Representation Web Application"
 requires-python = ">=3.11"
 dependencies = [
     "algorithms>=0.1.4",

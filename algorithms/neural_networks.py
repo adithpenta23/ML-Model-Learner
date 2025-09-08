@@ -9,10 +9,10 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
-from utils.data_utils import process_uploaded_data
+
 
 def show_page():
-    st.title("🧠 Neural Networks")
+    st.title("Neural Networks")
     
     st.markdown("""
     ## What are Neural Networks?
@@ -35,7 +35,7 @@ def show_page():
     problem_type = st.sidebar.radio("Problem Type", ["Classification", "Regression"])
     
     # Data source selection
-    data_source = st.sidebar.radio("Data Source", ["Sample Data", "Upload CSV"])
+    data_source = st.sidebar.radio("Data Source", ["Sample Data"])
     
     if data_source == "Sample Data":
         # Sample data parameters
@@ -70,38 +70,8 @@ def show_page():
         feature_names = [f'Feature_{i+1}' for i in range(n_features)]
         
     else:
-        # File upload
-        uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=['csv'])
-        if uploaded_file is not None:
-            df = process_uploaded_data(uploaded_file)
-            if df is not None:
-                target_col = st.sidebar.selectbox("Select Target Column", df.columns)
-                feature_cols = st.sidebar.multiselect("Select Feature Columns", 
-                                                    [col for col in df.columns if col != target_col])
-                if feature_cols:
-                    X = df[feature_cols].values
-                    y = df[target_col].values
-                    n_features = len(feature_cols)
-                    feature_names = feature_cols
-                    
-                    # Auto-detect problem type
-                    unique_values = len(np.unique(y))
-                    if unique_values <= 10 and (y.dtype == 'object' or np.issubdtype(y.dtype, np.integer)):
-                        problem_type = "Classification"
-                        n_classes = unique_values
-                    else:
-                        problem_type = "Regression"
-                    st.sidebar.info(f"Auto-detected: {problem_type}")
-                else:
-                    st.warning("Please select at least one feature column.")
-                    return
-            else:
-                st.warning("Please upload a valid CSV file.")
-                return
-        else:
-            st.warning("Please upload a CSV file.")
-            return
-    
+       return
+
     # Network architecture
     st.sidebar.subheader("Network Architecture")
     
@@ -326,34 +296,6 @@ def show_page():
         
         st.plotly_chart(fig_activation, use_container_width=True)
     
-    # Network analysis
-    st.subheader("🧠 Network Analysis")
-    
-    # Layer-wise information
-    layer_info = []
-    total_params = 0
-    
-    for i, (layer_size, next_size) in enumerate(zip([n_features] + list(hidden_layer_sizes), 
-                                                   list(hidden_layer_sizes) + [n_classes if problem_type == "Classification" else 1])):
-        weights = layer_size * next_size
-        biases = next_size
-        layer_params = weights + biases
-        total_params += layer_params
-        
-        layer_info.append({
-            'Layer': f"Layer {i+1}",
-            'From': layer_size,
-            'To': next_size,
-            'Weights': weights,
-            'Biases': biases,
-            'Total Parameters': layer_params
-        })
-    
-    layer_df = pd.DataFrame(layer_info)
-    st.dataframe(layer_df)
-    
-    st.write(f"**Total Network Parameters:** {total_params:,}")
-    
     # Step-by-step explanation
     st.subheader("🔍 How Neural Networks Work")
     
@@ -400,24 +342,22 @@ def show_page():
         st.info(f"""
         **Current Neural Network Analysis:**
         
-        🎯 **Accuracy: {accuracy:.4f}** - Your network correctly classifies {accuracy*100:.1f}% of test samples.
+        **Accuracy: {accuracy:.4f}** - Your network correctly classifies {accuracy*100:.1f}% of test samples.
         
-        🧠 **Architecture: {n_features}-{'-'.join(map(str, hidden_layer_sizes))}-{n_classes}** - {len(hidden_layer_sizes)} hidden layer(s) with {sum(hidden_layer_sizes)} total hidden neurons.
+        **Architecture: {n_features}-{'-'.join(map(str, hidden_layer_sizes))}-{n_classes}** - {len(hidden_layer_sizes)} hidden layer(s) with {sum(hidden_layer_sizes)} total hidden neurons.
         
-        📊 **Parameters: {total_params:,}** - {'Large network (risk of overfitting)' if total_params > len(X_train) else 'Reasonable network size'}
-        
-        🔄 **Training: {convergence_status}** in {model.n_iter_} iterations
+        **Training: {convergence_status}** in {model.n_iter_} iterations
         """)
     else:
         convergence_status = "converged" if model.n_iter_ < max_iter else "reached max iterations"
         st.info(f"""
         **Current Neural Network Analysis:**
         
-        🎯 **R² Score: {r2:.4f}** - Your network explains {r2*100:.1f}% of the variance in the target.
+        **R² Score: {r2:.4f}** - Your network explains {r2*100:.1f}% of the variance in the target.
         
-        🧠 **Architecture: {n_features}-{'-'.join(map(str, hidden_layer_sizes))}-1** - {len(hidden_layer_sizes)} hidden layer(s) for regression.
+        **Architecture: {n_features}-{'-'.join(map(str, hidden_layer_sizes))}-1** - {len(hidden_layer_sizes)} hidden layer(s) for regression.
         
-        📏 **RMSE: {np.sqrt(mse):.4f}** - Average prediction error.
+        **RMSE: {np.sqrt(mse):.4f}** - Average prediction error.
         
-        🔄 **Training: {convergence_status}** in {model.n_iter_} iterations
+        **Training: {convergence_status}** in {model.n_iter_} iterations
         """)
