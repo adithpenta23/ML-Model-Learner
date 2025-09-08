@@ -1,10 +1,8 @@
 [project]
-name = "My-workspace"
 version = "0.1.0"
 description = "These is a ML algorithms Representation Web Application"
 requires-python = ">=3.11"
 dependencies = [
-    "algorithms>=0.1.4",
     "matplotlib>=3.10.6",
     "numpy>=2.3.2",
     "pandas>=2.3.2",
