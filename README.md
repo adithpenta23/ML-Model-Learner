@@ -11,11 +11,10 @@ A student project exploring various machine learning models with interactive dem
 ## Features
 
 - **Streamlit-powered interactive UI**: Easy model training, hyperparameter tuning, and results exploration.
-- **Multiple model options**: Includes [e.g.] Logistic Regression, Decision Trees, Random Forest, SVM, k-NN.
+- **Multiple model options**: Includes [e.g.] Logistic Regression, Decision Trees, Random Forest, Linear Regression, k-NN.
 - **Performance metrics visualized**: See accuracy, confusion matrix, ROC curves, etc.
-- **Dataset flexibility**: Load sample datasets (such as Iris, Wine)
 ## Contact
 
-Created by Adith Penat — a student exploring ML. 
-Feel free to reach out [via GitHub](https://github.com/adithpenta23) or email: adithpenta23@example.com
+Created by Adith Penta — a student exploring ML. 
+Feel free to reach out [via GitHub](https://github.com/adithpenta23) or email: adithpenta23@gmail.com
 
