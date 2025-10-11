@@ -1,5 +1,4 @@
 # ML Model Learner
-url:https://mlinteracti-dggxw2thm3tgpbpdrqhlkp.streamlit.app/
 A student project exploring various machine learning models with interactive demo via Streamlit.
 ## Table of Contents
 - [Overview](#overview)
